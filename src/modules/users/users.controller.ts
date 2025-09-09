@@ -30,7 +30,7 @@ import { diskStorage } from 'multer';
 @ApiTags('users')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('modules/users')
+@Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,

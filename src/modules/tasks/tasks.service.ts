@@ -5,6 +5,8 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { FindOptions } from 'sequelize';
 import { AuthUserService } from '@/modules/auth/auth-user.service';
+import { Project } from '@/modules/projects/entities/project.entity';
+import { User } from '@/modules/users/entities/user.entity';
 
 @Injectable()
 export class TasksService {
@@ -27,7 +29,13 @@ export class TasksService {
   }
 
   findAll(projectId?: number): Promise<Task[]> {
-    const options: FindOptions = {};
+    const options: FindOptions = {
+      include: [
+        { model: Project, attributes: ['name'] },
+        { model: User, as: 'assignee', attributes: ['name'] },
+      ],
+      order: [['createdAt', 'DESC']],
+    };
     if (projectId) {
       options.where = { projectId };
     }

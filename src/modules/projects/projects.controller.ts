@@ -8,12 +8,18 @@ import {
   Delete,
   UseGuards,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 
@@ -28,6 +34,18 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Create a new project' })
   create(@Body() createProjectDto: CreateProjectDto) {
     return this.projectsService.create(createProjectDto);
+  }
+
+  @Get('dashboard')
+  @ApiOperation({
+    summary: 'Get dashboard statistics for all or a specific project',
+  })
+  @ApiQuery({ name: 'projectId', required: false, type: Number })
+  getDashboardStats(
+    @Query('projectId', new ParseIntPipe({ optional: true }))
+    projectId?: number,
+  ) {
+    return this.projectsService.getDashboardStats(projectId);
   }
 
   @Get()

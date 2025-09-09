@@ -6,6 +6,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { AuthUserService } from '@/modules/auth/auth-user.service';
 import { Task } from '@/modules/tasks/entities/task.entity';
 import { User } from '@/modules/users/entities/user.entity';
+import { Op, Sequelize } from 'sequelize';
 
 @Injectable()
 export class ProjectsService {
@@ -52,40 +53,55 @@ export class ProjectsService {
     await project.destroy();
   }
 
-  async getDashboardStats(projectId: number) {
-    const totalTasks = await this.taskModel.count({
-      where: { projectId },
+  async getDashboardStats(projectId?: number) {
+    const whereClause = projectId ? { projectId } : {};
+
+    const kpis = {
+      totalTasks: await this.taskModel.count({ where: whereClause }),
+      completedTasks: await this.taskModel.count({
+        where: { ...whereClause, status: 'done' },
+      }),
+      pendingTasks: await this.taskModel.count({
+        where: { ...whereClause, status: { [Op.ne]: 'done' } },
+      }),
+      overdueTasks: await this.taskModel.count({
+        where: {
+          ...whereClause,
+          status: { [Op.ne]: 'done' },
+          dueDate: { [Op.lt]: new Date() },
+        },
+      }),
+    };
+
+    const tasksPerUserResult = await this.taskModel.findAll({
+      where: whereClause,
+      attributes: [
+        [Sequelize.fn('COUNT', Sequelize.col('Task.id')), 'count'],
+      ],
+      include: [{ model: User, as: 'assignee', attributes: ['name'] }],
+      group: ['assignee.id', 'assignee.name'],
+      order: [[Sequelize.fn('COUNT', Sequelize.col('Task.id')), 'DESC']],
+      limit: 7,
+      raw: true, // Usar raw: true para obter um resultado mais limpo
     });
 
+    // Mapeamento explícito para o formato que o gráfico precisa
+    const tasksPerUser = tasksPerUserResult.map((item: any) => ({
+      user: item['assignee.name'] || 'Não atribuído',
+      tasks: parseInt(item.count, 10),
+    }));
+
     const tasksByStatus = await this.taskModel.findAll({
-      where: { projectId },
-      attributes: [
-        'status',
-        [this.taskModel.sequelize!.fn('COUNT', 'status'), 'count'],
-      ],
+      where: whereClause,
+      attributes: ['status', [Sequelize.fn('COUNT', 'status'), 'count']],
       group: ['status'],
       raw: true,
     });
 
-    const tasksPerUser = await this.taskModel.findAll({
-      where: { projectId },
-      attributes: [
-        'assigneeId',
-        [this.taskModel.sequelize!.fn('COUNT', 'assigneeId'), 'count'],
-      ],
-      include: [
-        {
-          model: this.userModel,
-          attributes: ['name'],
-        },
-      ],
-      group: ['assigneeId', 'assignee.id'],
-    });
-
     return {
-      totalTasks,
-      tasksByStatus,
+      kpis,
       tasksPerUser,
+      tasksByStatus,
     };
   }
 }
