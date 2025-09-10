@@ -1,0 +1,355 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-09-10T00:00:00Z",
+  "__export_source": "gpt",
+  "resources": [
+    {
+      "_id": "wrk_8a7d3c5d2b10",
+      "_type": "workspace",
+      "name": "Project Manager API",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_9c2e7e1f3a55",
+      "_type": "environment",
+      "parentId": "wrk_8a7d3c5d2b10",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "ACCESS_TOKEN": ""
+      }
+    },
+    {
+      "_id": "fld_auth_c84d83f7b1e2",
+      "_type": "request_group",
+      "parentId": "wrk_8a7d3c5d2b10",
+      "name": "Auth"
+    },
+    {
+      "_id": "req_login_0d1f9b0f6a33",
+      "_type": "request",
+      "parentId": "fld_auth_c84d83f7b1e2",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"email\":\"admin@example.com\",\"password\":\"secret\"}"
+      }
+    },
+    {
+      "_id": "req_register_4e2bb7a7c5b1",
+      "_type": "request",
+      "parentId": "fld_auth_c84d83f7b1e2",
+      "name": "Register",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/register",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\":\"Admin\",\"email\":\"admin2@example.com\",\"password\":\"secret\",\"role\":\"admin\"}"
+      }
+    },
+    {
+      "_id": "req_me_5b7e11c3a0cd",
+      "_type": "request",
+      "parentId": "fld_auth_c84d83f7b1e2",
+      "name": "Me",
+      "method": "GET",
+      "url": "{{ _.base_url }}/auth/me",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "fld_users_20b48d3e61ab",
+      "_type": "request_group",
+      "parentId": "wrk_8a7d3c5d2b10",
+      "name": "Users"
+    },
+    {
+      "_id": "req_users_list_6b3f1d8c9e77",
+      "_type": "request",
+      "parentId": "fld_users_20b48d3e61ab",
+      "name": "List Users",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users?q=&limit=20",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "req_users_create_7a1b2c3d4e5f",
+      "_type": "request",
+      "parentId": "fld_users_20b48d3e61ab",
+      "name": "Create User",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\":\"New User\",\"email\":\"user@example.com\",\"password\":\"secret\",\"role\":\"developer\"}"
+      }
+    },
+    {
+      "_id": "req_users_get_1a2b3c4d5e6f",
+      "_type": "request",
+      "parentId": "fld_users_20b48d3e61ab",
+      "name": "Get User by ID",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "req_users_update_9f8e7d6c5b4a",
+      "_type": "request",
+      "parentId": "fld_users_20b48d3e61ab",
+      "name": "Update User",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/users/1",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\":\"User Updated\",\"email\":\"user.updated@example.com\",\"role\":\"manager\"}"
+      }
+    },
+    {
+      "_id": "req_users_delete_0f1e2d3c4b5a",
+      "_type": "request",
+      "parentId": "fld_users_20b48d3e61ab",
+      "name": "Delete User",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/users/1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "fld_projects_71a6c3d2e5f8",
+      "_type": "request_group",
+      "parentId": "wrk_8a7d3c5d2b10",
+      "name": "Projects"
+    },
+    {
+      "_id": "req_projects_list_3b4c5d6e7f81",
+      "_type": "request",
+      "parentId": "fld_projects_71a6c3d2e5f8",
+      "name": "List Projects",
+      "method": "GET",
+      "url": "{{ _.base_url }}/projects?q=&status=",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "req_projects_create_4c5d6e7f8a92",
+      "_type": "request",
+      "parentId": "fld_projects_71a6c3d2e5f8",
+      "name": "Create Project",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projects",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\":\"Website Revamp\",\"description\":\"Revamp marketing website\",\"status\":\"planned\",\"startDate\":\"2025-09-10\",\"endDate\":\"2025-10-10\",\"managerId\":1}"
+      }
+    },
+    {
+      "_id": "req_projects_get_5d6e7f8a9b03",
+      "_type": "request",
+      "parentId": "fld_projects_71a6c3d2e5f8",
+      "name": "Get Project",
+      "method": "GET",
+      "url": "{{ _.base_url }}/projects/1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "req_projects_update_6e7f8a9b0c14",
+      "_type": "request",
+      "parentId": "fld_projects_71a6c3d2e5f8",
+      "name": "Update Project",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/projects/1",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\":\"Website Revamp - Phase 2\",\"description\":\"More details\",\"status\":\"active\",\"startDate\":\"2025-09-12\",\"endDate\":\"2025-10-20\"}"
+      }
+    },
+    {
+      "_id": "req_projects_delete_7f8a9b0c1d25",
+      "_type": "request",
+      "parentId": "fld_projects_71a6c3d2e5f8",
+      "name": "Delete Project",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/projects/1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "req_projects_dashboard_8a9b0c1d2e36",
+      "_type": "request",
+      "parentId": "fld_projects_71a6c3d2e5f8",
+      "name": "Dashboard Data",
+      "method": "GET",
+      "url": "{{ _.base_url }}/projects/dashboard?projectId=1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "fld_members_82d7fa0b1c3e",
+      "_type": "request_group",
+      "parentId": "wrk_8a7d3c5d2b10",
+      "name": "Project Members"
+    },
+    {
+      "_id": "req_members_list_9a0b1c2d3e47",
+      "_type": "request",
+      "parentId": "fld_members_82d7fa0b1c3e",
+      "name": "List Members (by Project)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/project-members/project?projectId=1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "req_members_add_0b1c2d3e4f58",
+      "_type": "request",
+      "parentId": "fld_members_82d7fa0b1c3e",
+      "name": "Add Member",
+      "method": "POST",
+      "url": "{{ _.base_url }}/project-members",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"projectId\":1,\"userId\":1,\"role\":\"maintainer\"}"
+      }
+    },
+    {
+      "_id": "req_members_update_1c2d3e4f5069",
+      "_type": "request",
+      "parentId": "fld_members_82d7fa0b1c3e",
+      "name": "Update Member Role",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/project-members/role",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"projectId\":1,\"userId\":1,\"role\":\"contributor\"}"
+      }
+    },
+    {
+      "_id": "req_members_remove_2d3e4f50617a",
+      "_type": "request",
+      "parentId": "fld_members_82d7fa0b1c3e",
+      "name": "Remove Member",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/project-members?projectId=1&userId=1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "fld_tasks_90b1c2d3e4f5",
+      "_type": "request_group",
+      "parentId": "wrk_8a7d3c5d2b10",
+      "name": "Tasks"
+    },
+    {
+      "_id": "req_tasks_list_3c4d5e6f7081",
+      "_type": "request",
+      "parentId": "fld_tasks_90b1c2d3e4f5",
+      "name": "List Tasks",
+      "method": "GET",
+      "url": "{{ _.base_url }}/tasks?q=&status=&priority=&projectId=1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "req_tasks_create_4d5e6f708192",
+      "_type": "request",
+      "parentId": "fld_tasks_90b1c2d3e4f5",
+      "name": "Create Task",
+      "method": "POST",
+      "url": "{{ _.base_url }}/tasks",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"title\":\"Design header\",\"description\":\"Create a clean header\",\"status\":\"todo\",\"priority\":\"medium\",\"dueDate\":\"2025-10-01\",\"projectId\":1,\"assigneeId\":1}"
+      }
+    },
+    {
+      "_id": "req_tasks_get_5e6f708192a3",
+      "_type": "request",
+      "parentId": "fld_tasks_90b1c2d3e4f5",
+      "name": "Get Task",
+      "method": "GET",
+      "url": "{{ _.base_url }}/tasks/1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    },
+    {
+      "_id": "req_tasks_update_6f708192a3b4",
+      "_type": "request",
+      "parentId": "fld_tasks_90b1c2d3e4f5",
+      "name": "Update Task",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/tasks/1",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"title\":\"Design header v2\",\"description\":\"\",\"status\":\"in_progress\",\"priority\":\"high\",\"dueDate\":\"2025-10-05\"}"
+      }
+    },
+    {
+      "_id": "req_tasks_delete_708192a3b4c5",
+      "_type": "request",
+      "parentId": "fld_tasks_90b1c2d3e4f5",
+      "name": "Delete Task",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/tasks/1",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.ACCESS_TOKEN }}" }
+      ]
+    }
+  ]
+}

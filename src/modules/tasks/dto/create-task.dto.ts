@@ -14,13 +14,10 @@ export class CreateTaskDto {
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({
-    required: false,
-    example: 'Criar a interface e a lógica de autenticação.',
-  })
+  @ApiProperty({ example: 'Tela com formulário, validações, etc.' })
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @ApiProperty({
     enum: ['todo', 'in_progress', 'review', 'done'],
@@ -30,7 +27,10 @@ export class CreateTaskDto {
   @IsNotEmpty()
   status: 'todo' | 'in_progress' | 'review' | 'done';
 
-  @ApiProperty({ enum: ['low', 'medium', 'high', 'critical'], example: 'high' })
+  @ApiProperty({
+    enum: ['low', 'medium', 'high', 'critical'],
+    example: 'medium',
+  })
   @IsEnum(['low', 'medium', 'high', 'critical'])
   @IsNotEmpty()
   priority: 'low' | 'medium' | 'high' | 'critical';
@@ -38,10 +38,19 @@ export class CreateTaskDto {
   @ApiProperty({ required: false, example: '2025-10-15' })
   @IsDateString()
   @IsOptional()
-  dueDate: Date;
+  dueDate?: Date;
 
   @ApiProperty({ example: 1 })
   @IsNumber()
   @IsNotEmpty()
   projectId: number;
+
+  @ApiProperty({
+    required: false,
+    example: 5,
+    description: 'Usuário responsável pela tarefa',
+  })
+  @IsNumber()
+  @IsOptional()
+  assigneeId?: number;
 }

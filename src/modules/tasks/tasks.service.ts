@@ -16,14 +16,22 @@ export class TasksService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    const assigneeId = this.authUser.getUserId();
+    const project = await Project.findByPk(createTaskDto.projectId);
+    if (!project) throw new NotFoundException('Projeto não encontrado');
 
-    const taskData = {
+    const chosenAssigneeId =
+      createTaskDto.assigneeId ?? this.authUser.getUserId();
+
+    const assignee = await User.findByPk(chosenAssigneeId);
+    if (!assignee)
+      throw new NotFoundException('Usuário (assignee) não encontrado');
+
+    const newTask = new this.taskModel({
       ...createTaskDto,
-      assigneeId,
-    };
+      assigneeId: chosenAssigneeId,
+      description: createTaskDto.description ?? '',
+    });
 
-    const newTask = new this.taskModel(taskData);
     await newTask.save();
     return newTask;
   }
@@ -74,6 +82,18 @@ export class TasksService {
 
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
     const task = await this.findOne(id);
+
+    if (updateTaskDto.projectId !== undefined) {
+      const project = await Project.findByPk(updateTaskDto.projectId);
+      if (!project) throw new NotFoundException('Projeto não encontrado');
+    }
+
+    if (updateTaskDto.assigneeId !== undefined) {
+      const assignee = await User.findByPk(updateTaskDto.assigneeId);
+      if (!assignee)
+        throw new NotFoundException('Usuário (assignee) não encontrado');
+    }
+
     await task.update(updateTaskDto);
     return task.reload();
   }

@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  AllowNull,
 } from 'sequelize-typescript';
 import type {
   InferAttributes,
@@ -35,8 +36,9 @@ export class Task extends Model<
   @Column({ type: DataType.STRING, allowNull: false })
   declare priority: 'low' | 'medium' | 'high' | 'critical';
 
-  @Column(DataType.DATE)
-  declare dueDate: Date;
+  @AllowNull(true)
+  @Column({ type: DataType.DATE })
+  declare dueDate: Date | null;
 
   @ForeignKey(() => Project)
   @Column({ type: DataType.INTEGER, allowNull: false })

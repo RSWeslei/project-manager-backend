@@ -1,0 +1,416 @@
+{
+  "info": {
+    "name": "Project Manager API",
+    "_postman_id": "2c0cf1f1-9e53-4d54-8d1c-0d3a9c8e6f00",
+    "description": "Auth, Users, Projects, Project Members e Tasks",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"secret\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch(e) {}",
+                  "const token = json.accessToken || json.token || (json.data && json.data.accessToken);",
+                  "if (token) {",
+                  "  pm.environment.set('ACCESS_TOKEN', token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin\",\n  \"email\": \"admin2@example.com\",\n  \"password\": \"secret\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/register", "host": ["{{base_url}}"], "path": ["auth","register"] }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/me", "host": ["{{base_url}}"], "path": ["auth","me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users?q=&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["users"],
+              "query": [{ "key": "q", "value": "" }, { "key": "limit", "value": "20" }]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New User\",\n  \"email\": \"user@example.com\",\n  \"password\": \"secret\",\n  \"role\": \"developer\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users", "host": ["{{base_url}}"], "path": ["users"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.id) pm.environment.set('last_user_id', String(json.id));",
+                  "} catch(e) {}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": { "raw": "{{base_url}}/users/{{last_user_id}}", "host": ["{{base_url}}"], "path": ["users","{{last_user_id}}"] }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"User Updated\",\n  \"email\": \"user.updated@example.com\",\n  \"role\": \"manager\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/{{last_user_id}}", "host": ["{{base_url}}"], "path": ["users","{{last_user_id}}"] }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": { "raw": "{{base_url}}/users/{{last_user_id}}", "host": ["{{base_url}}"], "path": ["users","{{last_user_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "List Projects",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/projects?q=&status=",
+              "host": ["{{base_url}}"],
+              "path": ["projects"],
+              "query": [{ "key": "q", "value": "" }, { "key": "status", "value": "" }]
+            }
+          }
+        },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Website Revamp\",\n  \"description\": \"Revamp marketing website\",\n  \"status\": \"planned\",\n  \"startDate\": \"2025-09-10\",\n  \"endDate\": \"2025-10-10\",\n  \"managerId\": 1\n}"
+            },
+            "url": { "raw": "{{base_url}}/projects", "host": ["{{base_url}}"], "path": ["projects"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.id) pm.environment.set('last_project_id', String(json.id));",
+                  "} catch(e) {}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Project",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": { "raw": "{{base_url}}/projects/{{last_project_id}}", "host": ["{{base_url}}"], "path": ["projects","{{last_project_id}}"] }
+          }
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Website Revamp - Phase 2\",\n  \"description\": \"More details\",\n  \"status\": \"active\",\n  \"startDate\": \"2025-09-12\",\n  \"endDate\": \"2025-10-20\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/projects/{{last_project_id}}", "host": ["{{base_url}}"], "path": ["projects","{{last_project_id}}"] }
+          }
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": { "raw": "{{base_url}}/projects/{{last_project_id}}", "host": ["{{base_url}}"], "path": ["projects","{{last_project_id}}"] }
+          }
+        },
+        {
+          "name": "Dashboard Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/projects/dashboard?projectId={{last_project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["projects","dashboard"],
+              "query": [{ "key": "projectId", "value": "{{last_project_id}}" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Project Members",
+      "item": [
+        {
+          "name": "List Members (by Project)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/project-members/project?projectId={{last_project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["project-members","project"],
+              "query": [{ "key": "projectId", "value": "{{last_project_id}}" }]
+            }
+          }
+        },
+        {
+          "name": "Add Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projectId\": {{last_project_id}},\n  \"userId\": {{last_user_id}},\n  \"role\": \"maintainer\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/project-members", "host": ["{{base_url}}"], "path": ["project-members"] }
+          }
+        },
+        {
+          "name": "Update Member Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projectId\": {{last_project_id}},\n  \"userId\": {{last_user_id}},\n  \"role\": \"contributor\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/project-members/role", "host": ["{{base_url}}"], "path": ["project-members","role"] }
+          }
+        },
+        {
+          "name": "Remove Member",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/project-members?projectId={{last_project_id}}&userId={{last_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["project-members"],
+              "query": [
+                { "key": "projectId", "value": "{{last_project_id}}" },
+                { "key": "userId", "value": "{{last_user_id}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks?q=&status=&priority=&projectId={{last_project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                { "key": "q", "value": "" },
+                { "key": "status", "value": "" },
+                { "key": "priority", "value": "" },
+                { "key": "projectId", "value": "{{last_project_id}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Design header\",\n  \"description\": \"Create a clean header\",\n  \"status\": \"todo\",\n  \"priority\": \"medium\",\n  \"dueDate\": \"2025-10-01\",\n  \"projectId\": {{last_project_id}},\n  \"assigneeId\": {{last_user_id}}\n}"
+            },
+            "url": { "raw": "{{base_url}}/tasks", "host": ["{{base_url}}"], "path": ["tasks"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.id) pm.environment.set('last_task_id', String(json.id));",
+                  "} catch(e) {}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Task",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": { "raw": "{{base_url}}/tasks/{{last_task_id}}", "host": ["{{base_url}}"], "path": ["tasks","{{last_task_id}}"] }
+          }
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Design header v2\",\n  \"description\": \"\",\n  \"status\": \"in_progress\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2025-10-05\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/tasks/{{last_task_id}}", "host": ["{{base_url}}"], "path": ["tasks","{{last_task_id}}"] }
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{ACCESS_TOKEN}}", "type": "text" }
+            ],
+            "url": { "raw": "{{base_url}}/tasks/{{last_task_id}}", "host": ["{{base_url}}"], "path": ["tasks","{{last_task_id}}"] }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "ACCESS_TOKEN", "value": "" },
+    { "key": "last_user_id", "value": "1" },
+    { "key": "last_project_id", "value": "1" },
+    { "key": "last_task_id", "value": "1" }
+  ]
+}
