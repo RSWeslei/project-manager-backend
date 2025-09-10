@@ -24,7 +24,7 @@ export class ProjectMembersService {
     });
 
     if (existing) {
-      throw new ConflictException('User is already a member of this project.');
+      throw new ConflictException('Usuário já é membro deste projeto.');
     }
 
     return this.projectMemberModel.create(addMemberDto);
@@ -43,7 +43,7 @@ export class ProjectMembersService {
     });
 
     if (!member) {
-      throw new NotFoundException('Project member not found.');
+      throw new NotFoundException('Membro do projeto não encontrado.');
     }
 
     await member.destroy();

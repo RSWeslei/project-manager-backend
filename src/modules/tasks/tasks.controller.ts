@@ -6,22 +6,19 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
-  ParseIntPipe,
   Query,
+  ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
-import {
-  ApiTags,
-  ApiBearerAuth,
-  ApiOperation,
-  ApiQuery,
-} from '@nestjs/swagger';
 
-@ApiTags('tasks')
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+
+@ApiTags('Tarefas')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('tasks')
@@ -29,19 +26,13 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new task' })
+  @ApiOperation({ summary: 'Criar tarefa' })
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.create(createTaskDto);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'List all tasks with optional filters' })
-  @ApiQuery({ name: 'projectId', required: false, type: Number })
-  @ApiQuery({ name: 'status', required: false, type: String })
-  @ApiQuery({ name: 'priority', required: false, type: String })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiOperation({ summary: 'Listar tarefas' })
   findAll(
     @Query('projectId') projectId?: number,
     @Query('status') status?: string,
@@ -52,13 +43,13 @@ export class TasksController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a single task by ID' })
+  @ApiOperation({ summary: 'Obter tarefa por ID' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tasksService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a task' })
+  @ApiOperation({ summary: 'Atualizar uma tarefa' })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
@@ -67,7 +58,7 @@ export class TasksController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a task' })
+  @ApiOperation({ summary: 'Excluir tarefa' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.tasksService.remove(id);
   }

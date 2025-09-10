@@ -23,10 +23,11 @@ export class UsersService {
         password: dto.password,
         role: dto.role,
       });
-      return created.toResponseObject() as unknown as User;
+
+      return created.toResponseObject() as User;
     } catch (e) {
       if (e instanceof UniqueConstraintError) {
-        throw new ConflictException('Email already in use');
+        throw new ConflictException('E-mail já está em uso');
       }
       throw e;
     }
@@ -35,7 +36,9 @@ export class UsersService {
   async findByEmail(email: string): Promise<User> {
     const user = await this.userModel.findOne({ where: { email } });
     if (!user) {
-      throw new NotFoundException(`User with email ${email} not found.`);
+      throw new NotFoundException(
+        `Usuário com e-mail ${email} não encontrado.`,
+      );
     }
     return user;
   }
@@ -45,7 +48,8 @@ export class UsersService {
       attributes: { exclude: ['password', 'refreshToken'] },
       order: [['name', 'ASC']],
     });
-    return users.map((u) => u.toResponseObject() as unknown as User);
+
+    return users.map((u) => u.toResponseObject() as User);
   }
 
   async search(
@@ -71,28 +75,29 @@ export class UsersService {
 
   async findOne(id: number): Promise<User> {
     const user = await this.userModel.findByPk(id);
-    if (!user) throw new NotFoundException('User not found');
+
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
     return user.toResponseObject() as unknown as User;
   }
 
   async update(id: number, dto: UpdateUserDto): Promise<User> {
     const user = await this.userModel.findByPk(id);
-    if (!user) throw new NotFoundException('User not found');
+
+    if (!user) throw new NotFoundException('Usuário não encontrado');
 
     if (dto.email && dto.email !== user.email) {
       const exists = await this.userModel.findOne({
         where: { email: dto.email },
       });
-      if (exists) throw new ConflictException('Email already in use');
+
+      if (exists) throw new ConflictException('E-mail já está em uso');
     }
 
-    if (dto.name !== undefined) user.name = dto.name;
-    if (dto.email !== undefined) user.email = dto.email;
     if (dto.password) {
       const salt = await bcrypt.genSalt();
       user.password = await bcrypt.hash(dto.password, salt);
     }
-    if (dto.role !== undefined) user.role = dto.role;
 
     await user.save();
     return user.toResponseObject() as unknown as User;
@@ -100,14 +105,18 @@ export class UsersService {
 
   async remove(id: number): Promise<{ id: number }> {
     const user = await this.userModel.findByPk(id);
-    if (!user) throw new NotFoundException('User not found');
+
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
     await user.destroy();
     return { id };
   }
 
   async updatePhoto(userId: number, photoUrl: string): Promise<User> {
     const user = await this.userModel.findByPk(userId);
-    if (!user) throw new NotFoundException('User not found');
+
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
     user.photoUrl = photoUrl;
     await user.save();
     return user.toResponseObject() as unknown as User;

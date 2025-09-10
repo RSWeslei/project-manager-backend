@@ -41,13 +41,13 @@ export class UsersController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create user' })
+  @ApiOperation({ summary: 'Criar usuário' })
   create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'List users (supports ?q=&limit=)' })
+  @ApiOperation({ summary: 'Listar usuários (suporta ?q=&limit=)' })
   findAll(
     @Query('q') q?: string,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit?: number,
@@ -59,26 +59,26 @@ export class UsersController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by id' })
+  @ApiOperation({ summary: 'Obter usuário por ID' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update user' })
+  @ApiOperation({ summary: 'Atualizar usuário' })
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete user' })
+  @ApiOperation({ summary: 'Excluir usuário' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
 
   @Post('photo')
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Upload current user photo' })
+  @ApiOperation({ summary: 'Enviar foto do usuário atual' })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({

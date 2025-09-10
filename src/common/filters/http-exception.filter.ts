@@ -39,7 +39,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof Error) {
       message = exception.message;
     } else {
-      message = 'Internal server error';
+      message = 'Erro interno do servidor';
     }
 
     response.status(status).json({

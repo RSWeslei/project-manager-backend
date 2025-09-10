@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { UsersService } from '@/modules/users/users.service';
 import { UserPayload } from '@/common/interfaces/user-payload.interface';
 
-@ApiTags('auth')
+@ApiTags('autenticação')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -26,20 +26,20 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Log in a user' })
+  @ApiOperation({ summary: 'Fazer login de um usuário' })
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto.email, loginDto.password);
   }
 
   @Post('register')
-  @ApiOperation({ summary: 'Register a new user' })
+  @ApiOperation({ summary: 'Registrar um novo usuário' })
   register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
   }
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Refresh the access token' })
+  @ApiOperation({ summary: 'Atualizar o token de acesso' })
   refresh(@Body() body: { refreshToken: string }) {
     return this.authService.refreshToken(body.refreshToken);
   }
@@ -47,7 +47,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiOperation({ summary: 'Obter o perfil do usuário atual' })
   getProfile(@Request() req: { user: UserPayload }) {
     return this.usersService.findOne(req.user.sub);
   }

@@ -64,6 +64,7 @@ export class AuthService {
     }
 
     const refreshTokenMatches = await bcrypt.compare(token, user.refreshToken);
+
     if (!refreshTokenMatches) {
       throw new UnauthorizedException('Acesso negado.');
     }

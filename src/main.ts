@@ -31,7 +31,7 @@ async function bootstrap() {
 
   // Configuração do swagger para documentação da API
   const config = new DocumentBuilder()
-    .setTitle('Project Manager API')
+    .setTitle('API de Gerenciamento de Projetos')
     .setDescription('Documentação da API para o Sistema de Gestão de Projetos')
     .setVersion('1.0')
     .addBearerAuth()
@@ -43,9 +43,9 @@ async function bootstrap() {
   // Define a porta da aplicação a partir de variáveis de ambiente ou usa 3001
   const port = process.env.PORT || 3001;
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`Aplicação em execução em: http://localhost:${port}`);
   console.log(
-    `API documentation is available at: http://localhost:${port}/api-docs`,
+    `Documentação da API disponível em: http://localhost:${port}/api-docs`,
   );
 }
 bootstrap();

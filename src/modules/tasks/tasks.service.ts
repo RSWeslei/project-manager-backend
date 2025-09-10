@@ -67,7 +67,7 @@ export class TasksService {
   async findOne(id: number): Promise<Task> {
     const task = await this.taskModel.findByPk(id);
     if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found.`);
+      throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
     }
     return task;
   }

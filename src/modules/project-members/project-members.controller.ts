@@ -14,7 +14,7 @@ import { AddMemberDto } from './dto/add-member.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
-@ApiTags('project-members')
+@ApiTags('membros-do-projeto')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('project-members')
@@ -22,19 +22,19 @@ export class ProjectMembersController {
   constructor(private readonly projectMembersService: ProjectMembersService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Add a user to a project' })
+  @ApiOperation({ summary: 'Adicionar um usuário a um projeto' })
   addMember(@Body() addMemberDto: AddMemberDto) {
     return this.projectMembersService.addMember(addMemberDto);
   }
 
   @Get('project/:projectId')
-  @ApiOperation({ summary: 'List all members of a project' })
+  @ApiOperation({ summary: 'Listar todos os membros de um projeto' })
   findMembersByProject(@Param('projectId', ParseIntPipe) projectId: number) {
     return this.projectMembersService.findMembersByProject(projectId);
   }
 
   @Delete()
-  @ApiOperation({ summary: 'Remove a user from a project' })
+  @ApiOperation({ summary: 'Remover um usuário de um projeto' })
   removeMember(
     @Query('projectId', ParseIntPipe) projectId: number,
     @Query('userId', ParseIntPipe) userId: number,

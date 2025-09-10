@@ -13,7 +13,6 @@ export class ProjectsService {
   constructor(
     @InjectModel(Project) private projectModel: typeof Project,
     @InjectModel(Task) private taskModel: typeof Task,
-    @InjectModel(User) private userModel: typeof User,
     private readonly authUser: AuthUserService,
   ) {}
 
@@ -47,7 +46,7 @@ export class ProjectsService {
       include: ['manager'],
     });
     if (!project) {
-      throw new NotFoundException(`Project with ID ${id} not found.`);
+      throw new NotFoundException(`Projeto com ID ${id} não encontrado.`);
     }
     return project;
   }

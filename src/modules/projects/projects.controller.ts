@@ -23,7 +23,7 @@ import {
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 
-@ApiTags('projects')
+@ApiTags('projetos')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('projects')
@@ -31,14 +31,15 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new project' })
+  @ApiOperation({ summary: 'Criar um novo projeto' })
   create(@Body() createProjectDto: CreateProjectDto) {
     return this.projectsService.create(createProjectDto);
   }
 
   @Get('dashboard')
   @ApiOperation({
-    summary: 'Get dashboard statistics for all or a specific project',
+    summary:
+      'Obter estatísticas do dashboard para todos os projetos ou um projeto específico',
   })
   @ApiQuery({ name: 'projectId', required: false, type: Number })
   getDashboardStats(
@@ -49,7 +50,7 @@ export class ProjectsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List all projects with optional filters' })
+  @ApiOperation({ summary: 'Listar todos os projetos com filtros opcionais' })
   @ApiQuery({ name: 'status', required: false, type: String })
   @ApiQuery({ name: 'q', required: false, type: String })
   findAll(@Query('status') status?: string, @Query('q') q?: string) {
@@ -57,13 +58,13 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a single project by ID' })
+  @ApiOperation({ summary: 'Obter um projeto pelo ID' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.projectsService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a project' })
+  @ApiOperation({ summary: 'Atualizar um projeto' })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProjectDto: UpdateProjectDto,
@@ -74,7 +75,9 @@ export class ProjectsController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles('admin', 'manager')
-  @ApiOperation({ summary: 'Delete a project (Admin/Manager only)' })
+  @ApiOperation({
+    summary: 'Excluir um projeto (apenas Administrador/Gerente)',
+  })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.projectsService.remove(id);
   }

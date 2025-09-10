@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const secret = configService.get<string>('JWT_SECRET');
 
     if (!secret) {
-      throw new Error('JWT_SECRET not found in environment variables.');
+      throw new Error('JWT_SECRET não encontrado nas variáveis de ambiente.');
     }
 
     super({
