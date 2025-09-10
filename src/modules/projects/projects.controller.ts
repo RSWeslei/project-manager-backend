@@ -49,9 +49,11 @@ export class ProjectsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List all projects' })
-  findAll() {
-    return this.projectsService.findAll();
+  @ApiOperation({ summary: 'List all projects with optional filters' })
+  @ApiQuery({ name: 'status', required: false, type: String })
+  @ApiQuery({ name: 'q', required: false, type: String })
+  findAll(@Query('status') status?: string, @Query('q') q?: string) {
+    return this.projectsService.findAll(status, q);
   }
 
   @Get(':id')

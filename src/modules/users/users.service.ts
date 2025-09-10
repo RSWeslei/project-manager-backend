@@ -8,7 +8,7 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UniqueConstraintError } from 'sequelize';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(
@@ -64,5 +64,14 @@ export class UsersService {
     user.photoUrl = photoUrl;
     await user.save();
     return user;
+  }
+
+  async updateRefreshToken(userId: number, refreshToken: string) {
+    const salt = await bcrypt.genSalt();
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+    await this.userModel.update(
+      { refreshToken: hashedRefreshToken },
+      { where: { id: userId } },
+    );
   }
 }

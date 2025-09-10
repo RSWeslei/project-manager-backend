@@ -15,7 +15,7 @@ export class AuthUserService {
   }
 
   getUserId(): number {
-    return this.request.user?.userId;
+    return this.request.user?.sub;
   }
 
   getUserRole(): string {

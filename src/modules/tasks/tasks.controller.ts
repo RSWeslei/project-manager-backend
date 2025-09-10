@@ -35,17 +35,20 @@ export class TasksController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List all tasks or filter by project' })
-  @ApiQuery({
-    name: 'projectId',
-    required: false,
-    description: 'ID of the project to filter tasks',
-  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'List all tasks with optional filters' })
+  @ApiQuery({ name: 'projectId', required: false, type: Number })
+  @ApiQuery({ name: 'status', required: false, type: String })
+  @ApiQuery({ name: 'priority', required: false, type: String })
+  @ApiQuery({ name: 'q', required: false, type: String })
   findAll(
-    @Query('projectId', new ParseIntPipe({ optional: true }))
-    projectId?: number,
+    @Query('projectId') projectId?: number,
+    @Query('status') status?: string,
+    @Query('priority') priority?: string,
+    @Query('q') q?: string,
   ) {
-    return this.tasksService.findAll(projectId);
+    return this.tasksService.findAll({ projectId, status, priority, q });
   }
 
   @Get(':id')

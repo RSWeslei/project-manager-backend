@@ -7,13 +7,13 @@ module.exports = {
     const now = new Date();
 
     const usersToCreate = [
-      { name: 'Admin Projeta', email: 'admin@projeta.com', password: 'password123', role: 'admin' },
-      { name: 'Gerente Alice', email: 'alice@projeta.com', password: 'password123', role: 'manager' },
-      { name: 'Gerente Bruno', email: 'bruno@projeta.com', password: 'password123', role: 'manager' },
-      { name: 'Dev Carlos', email: 'carlos@projeta.com', password: 'password123', role: 'developer' },
-      { name: 'Dev Diana', email: 'diana@projeta.com', password: 'password123', role: 'developer' },
-      { name: 'Dev Eduardo', email: 'eduardo@projeta.com', password: 'password123', role: 'developer' },
-      { name: 'Dev Fabiola', email: 'fabiola@projeta.com', password: 'password123', role: 'developer' },
+      { name: 'Admin Projeto', email: 'admin@projeto.com', password: 'password123', role: 'admin' },
+      { name: 'Gerente Alice', email: 'alice@projeto.com', password: 'password123', role: 'manager' },
+      { name: 'Gerente Bruno', email: 'bruno@projeto.com', password: 'password123', role: 'manager' },
+      { name: 'Dev Carlos', email: 'carlos@projeto.com', password: 'password123', role: 'developer' },
+      { name: 'Dev Diana', email: 'diana@projeto.com', password: 'password123', role: 'developer' },
+      { name: 'Dev Eduardo', email: 'eduardo@projeto.com', password: 'password123', role: 'developer' },
+      { name: 'Dev Fabiola', email: 'fabiola@projeto.com', password: 'password123', role: 'developer' },
     ];
 
     for (const user of usersToCreate) {
@@ -25,12 +25,12 @@ module.exports = {
     const users = await queryInterface.bulkInsert('users', usersToCreate, { returning: true });
 
     const adminUser = users.find(u => u.role === 'admin');
-    const managerAlice = users.find(u => u.email === 'alice@projeta.com');
-    const managerBruno = users.find(u => u.email === 'bruno@projeta.com');
-    const devCarlos = users.find(u => u.email === 'carlos@projeta.com');
-    const devDiana = users.find(u => u.email === 'diana@projeta.com');
-    const devEduardo = users.find(u => u.email === 'eduardo@projeta.com');
-    const devFabiola = users.find(u => u.email === 'fabiola@projeta.com');
+    const managerAlice = users.find(u => u.email === 'alice@projeto.com');
+    const managerBruno = users.find(u => u.email === 'bruno@projeto.com');
+    const devCarlos = users.find(u => u.email === 'carlos@projeto.com');
+    const devDiana = users.find(u => u.email === 'diana@projeto.com');
+    const devEduardo = users.find(u => u.email === 'eduardo@projeto.com');
+    const devFabiola = users.find(u => u.email === 'fabiola@projeto.com');
 
     const projectsToCreate = [
       { name: 'Projeto Alpha', description: 'Desenvolvimento do novo aplicativo móvel para gestão financeira.', status: 'active', managerId: managerAlice.id, startDate: new Date(now.getFullYear(), now.getMonth() - 2, 1), endDate: new Date(now.getFullYear(), now.getMonth() + 4, 1) },

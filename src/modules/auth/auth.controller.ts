@@ -14,6 +14,7 @@ import { CreateUserDto } from '@/modules/users/dto/create-user.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { UsersService } from '@/modules/users/users.service';
+import { UserPayload } from '@/common/interfaces/user-payload.interface';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -26,8 +27,8 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Log in a user' })
-  signIn(@Body() loginDto: LoginDto) {
-    return this.authService.signIn(loginDto.email, loginDto.password);
+  login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto.email, loginDto.password);
   }
 
   @Post('register')
@@ -36,11 +37,18 @@ export class AuthController {
     return this.authService.register(createUserDto);
   }
 
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh the access token' })
+  refresh(@Body() body: { refreshToken: string }) {
+    return this.authService.refreshToken(body.refreshToken);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
-  getProfile(@Request() req: { user: { userId: number } }) {
-    return this.usersService.findOne(req.user.userId);
+  getProfile(@Request() req: { user: UserPayload }) {
+    return this.usersService.findOne(req.user.sub);
   }
 }

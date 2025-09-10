@@ -34,11 +34,17 @@ export class User extends Model<
   @Column({ type: DataType.STRING, allowNull: false })
   declare password: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({
+    type: DataType.ENUM('admin', 'manager', 'developer'),
+    allowNull: false,
+  })
   declare role: 'admin' | 'manager' | 'developer';
 
   @Column({ type: DataType.STRING, allowNull: true })
   declare photoUrl: string | null;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  declare refreshToken: string | null;
 
   @HasMany(() => Project, 'managerId')
   declare managedProjects?: NonAttribute<Project[]>;
@@ -58,5 +64,11 @@ export class User extends Model<
 
   async comparePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
+  }
+
+  toResponseObject() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, refreshToken, ...result } = this.get({ plain: true });
+    return result;
   }
 }

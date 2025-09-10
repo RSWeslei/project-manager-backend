@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Task } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { FindOptions } from 'sequelize';
+import { FindOptions, Op, WhereOptions } from 'sequelize';
 import { AuthUserService } from '@/modules/auth/auth-user.service';
 import { Project } from '@/modules/projects/entities/project.entity';
 import { User } from '@/modules/users/entities/user.entity';
@@ -28,17 +28,39 @@ export class TasksService {
     return newTask;
   }
 
-  findAll(projectId?: number): Promise<Task[]> {
+  findAll(filters: {
+    projectId?: number;
+    status?: string;
+    priority?: string;
+    q?: string;
+  }): Promise<Task[]> {
+    const where: WhereOptions<Task> = {};
+
+    if (filters.projectId) {
+      where.projectId = filters.projectId;
+    }
+    if (filters.status) {
+      where.status = filters.status;
+    }
+    if (filters.priority) {
+      where.priority = filters.priority;
+    }
+    if (filters.q) {
+      where[Op.or] = [
+        { title: { [Op.iLike]: `%${filters.q}%` } },
+        { description: { [Op.iLike]: `%${filters.q}%` } },
+      ];
+    }
+
     const options: FindOptions = {
+      where,
       include: [
         { model: Project, attributes: ['name'] },
         { model: User, as: 'assignee', attributes: ['name'] },
       ],
       order: [['createdAt', 'DESC']],
     };
-    if (projectId) {
-      options.where = { projectId };
-    }
+
     return this.taskModel.findAll(options);
   }
 

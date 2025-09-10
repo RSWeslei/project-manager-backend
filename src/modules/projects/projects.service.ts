@@ -6,7 +6,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { AuthUserService } from '@/modules/auth/auth-user.service';
 import { Task } from '@/modules/tasks/entities/task.entity';
 import { User } from '@/modules/users/entities/user.entity';
-import { Op, Sequelize } from 'sequelize';
+import { Op, Sequelize, WhereOptions } from 'sequelize';
 
 @Injectable()
 export class ProjectsService {
@@ -25,8 +25,21 @@ export class ProjectsService {
     });
   }
 
-  findAll(): Promise<Project[]> {
-    return this.projectModel.findAll({ include: ['manager'] });
+  findAll(status?: string, q?: string): Promise<Project[]> {
+    const where: WhereOptions<Project> = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (q) {
+      where[Op.or] = [
+        { name: { [Op.iLike]: `%${q}%` } },
+        { description: { [Op.iLike]: `%${q}%` } },
+      ];
+    }
+
+    return this.projectModel.findAll({ where, include: ['manager'] });
   }
 
   async findOne(id: number): Promise<Project> {
