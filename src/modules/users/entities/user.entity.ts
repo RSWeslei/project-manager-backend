@@ -17,6 +17,8 @@ import { Project } from '@/modules/projects/entities/project.entity';
 import { Task } from '@/modules/tasks/entities/task.entity';
 import { ProjectMember } from '@/modules/project-members/entities/project-member.entity';
 
+export type SafeUser = Omit<InferAttributes<User>, 'password' | 'refreshToken'>;
+
 @Table({ tableName: 'users', timestamps: true, paranoid: true })
 export class User extends Model<
   InferAttributes<User>,

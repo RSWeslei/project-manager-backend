@@ -5,6 +5,7 @@ import { CreateUserDto } from '@/modules/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { UserPayload } from '@/common/interfaces/user-payload.interface';
+import { SafeUser } from '@/modules/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -79,8 +80,7 @@ export class AuthService {
     return { accessToken: newAccessToken };
   }
 
-  async register(createUserDto: CreateUserDto) {
-    const user = await this.usersService.create(createUserDto);
-    return user.toResponseObject();
+  async register(createUserDto: CreateUserDto): Promise<SafeUser> {
+    return await this.usersService.create(createUserDto);
   }
 }

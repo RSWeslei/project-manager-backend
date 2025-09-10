@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op, UniqueConstraintError } from 'sequelize';
 import * as bcrypt from 'bcrypt';
 
-import { User } from './entities/user.entity';
+import { SafeUser, User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -15,7 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(@InjectModel(User) private readonly userModel: typeof User) {}
 
-  async create(dto: CreateUserDto): Promise<User> {
+  async create(dto: CreateUserDto): Promise<SafeUser> {
     try {
       const created = await this.userModel.create({
         name: dto.name,
@@ -24,7 +24,7 @@ export class UsersService {
         role: dto.role,
       });
 
-      return created.toResponseObject() as User;
+      return created.toResponseObject();
     } catch (e) {
       if (e instanceof UniqueConstraintError) {
         throw new ConflictException('E-mail já está em uso');
@@ -118,6 +118,7 @@ export class UsersService {
     if (!user) throw new NotFoundException('Usuário não encontrado');
 
     user.photoUrl = photoUrl;
+
     await user.save();
     return user.toResponseObject() as unknown as User;
   }
@@ -125,6 +126,7 @@ export class UsersService {
   async updateRefreshToken(userId: number, refreshToken: string) {
     const salt = await bcrypt.genSalt();
     const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+
     await this.userModel.update(
       { refreshToken: hashedRefreshToken },
       { where: { id: userId } },

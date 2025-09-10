@@ -17,15 +17,9 @@ Projeta é uma aplicação Full-Stack completa para gestão de projetos, tarefas
 
 -   **Gestão de Projetos:**
     -   [x] CRUD completo de projetos.
-    -   [x] Atribuição automática do criador como gerente do projeto.
 
 -   **Gestão de Tarefas:**
     -   [x] CRUD completo de tarefas vinculadas a projetos.
-    -   [x] Atribuição automática da tarefa ao usuário que a criou.
-
--   **Gestão de Equipes:**
-    -   [x] Adicionar e remover membros de um projeto.
-    -   [x] Listar todos os membros de um projeto específico.
 
 -   **Dashboard e Análise:**
     -   [x] Endpoint de estatísticas que calcula totais e agrupamentos de dados.
@@ -42,9 +36,9 @@ Projeta é uma aplicação Full-Stack completa para gestão de projetos, tarefas
 ## 🛠️ Stack Tecnológica
 
 -   **Backend:** NestJS, Sequelize, PostgreSQL, TypeScript
--   **Frontend:** React 19, Vite, JavaScript, Tailwind CSS
+-   **Frontend:** React 19, Vite, JavaScript, Tailwind CSS, Mantine
 -   **Autenticação:** JSON Web Tokens (JWT)
--   **Testes de API:** Postman / Insomnia
+-   **Testes de API:** Postman
 
 ---
 
