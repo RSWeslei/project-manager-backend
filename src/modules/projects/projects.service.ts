@@ -88,17 +88,14 @@ export class ProjectsService {
 
     const tasksPerUserResult = await this.taskModel.findAll({
       where: whereClause,
-      attributes: [
-        [Sequelize.fn('COUNT', Sequelize.col('Task.id')), 'count'],
-      ],
+      attributes: [[Sequelize.fn('COUNT', Sequelize.col('Task.id')), 'count']],
       include: [{ model: User, as: 'assignee', attributes: ['name'] }],
       group: ['assignee.id', 'assignee.name'],
       order: [[Sequelize.fn('COUNT', Sequelize.col('Task.id')), 'DESC']],
       limit: 7,
-      raw: true, // Usar raw: true para obter um resultado mais limpo
+      raw: true,
     });
 
-    // Mapeamento explícito para o formato que o gráfico precisa
     const tasksPerUser = tasksPerUserResult.map((item: any) => ({
       user: item['assignee.name'] || 'Não atribuído',
       tasks: parseInt(item.count, 10),

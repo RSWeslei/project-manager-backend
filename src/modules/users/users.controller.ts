@@ -7,25 +7,28 @@ import {
   Param,
   Delete,
   UseGuards,
-  UseInterceptors,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiConsumes,
-  ApiBody,
-} from '@nestjs/swagger';
+
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthUserService } from '@/modules/auth/auth-user.service';
-import { extname } from 'path';
-import { diskStorage } from 'multer';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -38,78 +41,53 @@ export class UsersController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({
-    status: 201,
-    description: 'The user has been successfully created.',
-  })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @ApiOperation({ summary: 'Create user' })
+  create(@Body() dto: CreateUserDto) {
+    return this.usersService.create(dto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Return all users.' })
-  findAll() {
+  @ApiOperation({ summary: 'List users (supports ?q=&limit=)' })
+  findAll(
+    @Query('q') q?: string,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit?: number,
+  ) {
+    if (q && q.trim().length > 0) {
+      return this.usersService.search(q, limit);
+    }
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a user by ID' })
-  @ApiResponse({ status: 200, description: 'Return the user.' })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @ApiOperation({ summary: 'Get user by id' })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a user' })
-  @ApiResponse({
-    status: 200,
-    description: 'The user has been successfully updated.',
-  })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @ApiOperation({ summary: 'Update user' })
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
+    return this.usersService.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a user' })
-  @ApiResponse({
-    status: 204,
-    description: 'The user has been successfully deleted.',
-  })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @ApiOperation({ summary: 'Delete user' })
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
   }
 
   @Post('photo')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
+  @ApiOperation({ summary: 'Upload current user photo' })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './public/photos',
         filename: (_req, file, cb) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
+          const rand = Array.from({ length: 24 })
+            .map(() => Math.floor(Math.random() * 16).toString(16))
             .join('');
-          return cb(null, `${randomName}${extname(file.originalname)}`);
+          cb(null, `${rand}${extname(file.originalname)}`);
         },
       }),
     }),
