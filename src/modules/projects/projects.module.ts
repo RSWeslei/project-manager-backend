@@ -11,5 +11,6 @@ import { User } from '@/modules/users/entities/user.entity';
   imports: [SequelizeModule.forFeature([Project, Task, User]), AuthModule],
   controllers: [ProjectsController],
   providers: [ProjectsService],
+  exports: [ProjectsService],
 })
 export class ProjectsModule {}

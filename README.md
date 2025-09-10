@@ -79,35 +79,22 @@ Projeta é uma aplicação Full-Stack completa para gestão de projetos, tarefas
     ```
 3.  Copie o arquivo de ambiente de exemplo e preencha com suas credenciais do PostgreSQL:
     ```bash
-    cp .env.example .env
+    cp .env.example .env || copy .env.example .env
     ```
-4.  Compile o projeto (necessário para os seeders):
+    
+4. Crie o banco de dados no PostgreSQL conforme o nome definido na variável `DB_NAME` do arquivo `.env`.
+
+5.  Compile o projeto (necessário para os seeders):
     ```bash
     npm run build
     ```
-5.  (Opcional, mas recomendado) Popule o banco de dados com dados de exemplo:
+6.  (Opcional, mas recomendado) Popule o banco de dados com dados de exemplo:
     ```bash
     npm run db:seed
     ```
-6.  Inicie o servidor de desenvolvimento:
+7.  Inicie o servidor de desenvolvimento:
     ```bash
     npm run start:dev
     ```
 -   A API estará rodando em `http://localhost:3001`.
 -   A documentação do Swagger estará em `http://localhost:3001/api-docs`.
-
-### Frontend
-
-1.  Em um novo terminal, navegue até a pasta do frontend:
-    ```bash
-    cd project-manager-frontend
-    ```
-2.  Instale as dependências:
-    ```bash
-    npm install
-    ```
-3.  Inicie o servidor de desenvolvimento:
-    ```bash
-    npm run dev
-    ```
--   A aplicação estará disponível em `http://localhost:5173`.

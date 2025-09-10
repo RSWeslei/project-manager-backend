@@ -1,44 +1,43 @@
 import {
-  Controller,
-  Post,
   Body,
-  Get,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
-  ParseIntPipe,
+  Get,
+  Patch,
+  Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ProjectMembersService } from './project-members.service';
-import { AddMemberDto } from './dto/add-member.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { AddMemberDto } from '@/modules/project-members/dto/add-member.dto';
+import { UpdateMemberRoleDto } from '@/modules/project-members/dto/update-member-role.dto';
 
-@ApiTags('membros-do-projeto')
-@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('project-members')
 export class ProjectMembersController {
-  constructor(private readonly projectMembersService: ProjectMembersService) {}
+  constructor(private readonly service: ProjectMembersService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Adicionar um usuário a um projeto' })
-  addMember(@Body() addMemberDto: AddMemberDto) {
-    return this.projectMembersService.addMember(addMemberDto);
+  @Get('project')
+  async byProject(@Query('projectId') projectId: string) {
+    return this.service.findMembersByProject(Number(projectId));
   }
 
-  @Get('project/:projectId')
-  @ApiOperation({ summary: 'Listar todos os membros de um projeto' })
-  findMembersByProject(@Param('projectId', ParseIntPipe) projectId: number) {
-    return this.projectMembersService.findMembersByProject(projectId);
+  @Post()
+  async add(@Body() dto: AddMemberDto) {
+    return this.service.addMember(dto);
+  }
+
+  @Patch('role')
+  async updateRole(@Body() dto: UpdateMemberRoleDto) {
+    return this.service.updateMemberRole(dto);
   }
 
   @Delete()
-  @ApiOperation({ summary: 'Remover um usuário de um projeto' })
-  removeMember(
-    @Query('projectId', ParseIntPipe) projectId: number,
-    @Query('userId', ParseIntPipe) userId: number,
+  async remove(
+    @Query('projectId') projectId: string,
+    @Query('userId') userId: string,
   ) {
-    return this.projectMembersService.removeMember(projectId, userId);
+    return this.service.removeMember(Number(projectId), Number(userId));
   }
 }

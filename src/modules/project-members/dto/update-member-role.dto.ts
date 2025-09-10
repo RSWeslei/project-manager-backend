@@ -1,6 +1,6 @@
 import { IsInt, IsNotEmpty, IsIn } from 'class-validator';
 
-export class AddMemberDto {
+export class UpdateMemberRoleDto {
   @IsInt()
   projectId!: number;
 
