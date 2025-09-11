@@ -27,7 +27,7 @@ export class ProjectMember extends Model<
   @Column({ type: DataType.INTEGER, allowNull: false })
   declare projectId: number;
 
-  @BelongsTo(() => Project)
+  @BelongsTo(() => Project, { onDelete: 'CASCADE' })
   declare project?: NonAttribute<Project>;
 
   @ForeignKey(() => User)
